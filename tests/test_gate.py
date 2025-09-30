@@ -48,9 +48,12 @@ def test_long_mixed_arrivals_and_service():
         g.arrive("regular", f"r{i}")
     g.arrive("fastpass", "f1"); g.arrive("fastpass", "f2")
     served = []
-    for _ in range(8):
-        served.append(g.serve())
+    while True:
+        try:
+            served.append(g.serve())
+        except IndexError:
+            break
     # Pattern: F,R,R,R cycling with skips handled; check relative counts
-    # Expect 2 fastpass served and 6 regulars in first 8 serves (since both lines have stock)
+    # Expect 2 fastpass served and 5 regulars (since only 7 people total)
     assert served.count("f1") + served.count("f2") == 2
-    assert sum(1 for s in served if s.startswith("r")) == 6
+    assert sum(1 for s in served if s.startswith("r")) == 5
